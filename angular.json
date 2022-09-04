@@ -109,5 +109,7 @@
       }
     }
   },
-  "defaultProject": "courseProject"
+  "cli": {
+    "analytics": false
+  }
 }

@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription } from 'rxjs';
 import { LoggingService } from '../logging.service';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from './shopping-list.service';
@@ -10,20 +11,16 @@ import { ShoppingListService } from './shopping-list.service';
   styleUrls: ['./shopping-list.component.css']
 })
 export class ShoppingListComponent implements OnInit, OnDestroy {
-  ingredients : Ingredient [] = [];
-  private ingredientsChagedSub!: Subscription;
+  ingredients : Observable<{ingredients: Ingredient[]}>;
 
-  constructor(private slService: ShoppingListService, private logginService: LoggingService) { }
+  constructor(private slService: ShoppingListService, private logginService: LoggingService, private store: Store<{shoppingList: {ingredients: Ingredient[]}}>) { }
 
   ngOnDestroy(): void {
-    this.ingredientsChagedSub.unsubscribe();
   }
 
   ngOnInit(): void {
-    this.ingredients = this.slService.getIngredients();
-    this.ingredientsChagedSub = this.slService.ingredientsChanged.subscribe((ingredients: Ingredient[]) => {
-      this.ingredients = ingredients;      
-    });
+    this.ingredients = this.store.select('shoppingList');
+
     this.logginService.printLog('Hello from ShoppingListComponent ngOnInit!');
   }
 
